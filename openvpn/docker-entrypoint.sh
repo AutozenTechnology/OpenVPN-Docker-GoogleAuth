@@ -1,11 +1,10 @@
 #!/bin/bash
 
-
 if [ ! -f "/etc/openvpn/easy-rsa/pki/ca.crt" ]; then
   cd /etc/openvpn/easy-rsa
   # Init PKI dirs and build CA certs
-  ./easyrsa init-pki
-  ./easyrsa build-ca nopass
+  ./easyrsa  init-pki
+  ./easyrsa  build-ca nopass
   # Generate Diffie-Hellman parameters
   ./easyrsa gen-dh
   # Genrate server keypair
@@ -47,6 +46,7 @@ iptables -t nat -A POSTROUTING -s 10.8.0.2/24 -o $primary_nic -j MASQUERADE
 sed -i "s/port 443/port $HOST_SSL_PORT/" /etc/openvpn/server.conf;
 
 # Need to feed key password
+#/usr/sbin/openvpn --daemon ovpn-server --status /run/openvpn/server.status 10 --cd /etc/openvpn --script-security 2 --config /etc/openvpn/server.conf --writepid /run/openvpn/server.pid
 /usr/sbin/openvpn --cd /etc/openvpn/ --config /etc/openvpn/server.conf
 
-tail -f /dev/null
+#tail -f /dev/null

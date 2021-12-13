@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 
 volumes:
   openvpn_config:
@@ -39,7 +39,8 @@ services:
     volumes:
        - openvpn_config:/etc/openvpn
     restart: always
-    command: tail -f /dev/null
+    #command: tail -f /dev/null
+    command: [docker-entrypoint.sh]
 
   db:
     image: mariadb
