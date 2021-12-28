@@ -68,8 +68,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_webadmin
-    ports:
-      - 8080:80
     volumes:
       - openvpn_config:/etc/openvpn
     environment:
