@@ -1,13 +1,14 @@
 version: '3'
 
 volumes:
-  openvpn_config:
-  db_data:
-#networks:
-#   frontend:
-#    external: true
-#   backend:
-#    external: true
+  openvpn_config: null
+  db_data: null
+  apache_config: null
+    #networks:
+    #   frontend:
+    #    external: true
+    #   backend:
+    #    external: true
 
 services:
   openvpn:
@@ -16,9 +17,9 @@ services:
       context: .
       dockerfile: Dockerfile_openvpn
     cap_add:
-        - NET_ADMIN
+      - NET_ADMIN
     ports:
-        - $HOST_SSL_PORT:$HOST_SSL_PORT/tcp
+      - $HOST_SSL_PORT:$HOST_SSL_PORT/tcp
     environment:
       - HOST_ADDR
       - HOST_SSL_PORT
@@ -37,10 +38,10 @@ services:
       - EASYRSA_REQ_CN
       - EASYRSA_BATCH
     volumes:
-       - openvpn_config:/etc/openvpn
+      - openvpn_config:/etc/openvpn
     restart: always
     #command: tail -f /dev/null
-    command: [docker-entrypoint.sh]
+    command: [ docker-entrypoint.sh ]
 
   db:
     image: mariadb
@@ -56,8 +57,8 @@ services:
   googleauth:
     container_name: googleauth
     build:
-        context:  .
-        dockerfile: Dockerfile_googleauth
+      context: .
+      dockerfile: Dockerfile_googleauth
 
   webadmin:
     container_name: webadmin
@@ -65,8 +66,8 @@ services:
       - db
       - openvpn
     build:
-        context:  .
-        dockerfile: Dockerfile_webadmin
+      context: .
+      dockerfile: Dockerfile_webadmin
     ports:
       - 8080:80
     volumes:
@@ -77,5 +78,14 @@ services:
       - OPENVPN_APP_NAME
       - HOST_ADDR
       - HOST_SSL_PORT
+    command: [ start.sh ]
 
-    command: [start.sh]
+  openidc:
+    container_name: openidc
+    build:
+      context: ./openidc
+    ports:
+      - 443:443
+    volumes:
+      - apache_config:/opt/ssl
+    command: [ /root/run.sh ]
